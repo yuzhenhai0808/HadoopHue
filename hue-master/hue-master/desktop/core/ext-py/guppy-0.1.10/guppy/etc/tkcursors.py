@@ -5,11 +5,11 @@
 
 from Tkinter import *
 
-def tkcursors(master=None):
-    if master is None:
+def tkcursors(main=None):
+    if main is None:
 	root = Tk()
     else:
-	root = master
+	root = main
     for i, cursor in enumerate((
 	'X_cursor',
 	'arrow',
@@ -98,7 +98,7 @@ def tkcursors(master=None):
 		  width=20,anchor=W,relief=SUNKEN)
 	col, row = divmod(i, 27)
 	w.grid(row=row, column=col)
-    if master is None:
+    if main is None:
 	root.mainloop()
 
 if __name__ == '__main__':

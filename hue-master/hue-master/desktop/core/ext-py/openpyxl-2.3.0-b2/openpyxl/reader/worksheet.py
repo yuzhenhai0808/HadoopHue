@@ -74,7 +74,7 @@ class WorkSheetParser(object):
         self.styles = self.ws.parent._cell_styles
         self.differential_styles = wb._differential_styles
         self.keep_vba = wb.vba_archive is not None
-        self.shared_formula_masters = {}  # {si_str: Translator()}
+        self.shared_formula_mains = {}  # {si_str: Translator()}
 
     def parse(self):
         dispatcher = {
@@ -133,31 +133,31 @@ class WorkSheetParser(object):
                     # The spec (18.3.1.40) defines shared formulae in
                     # terms of the following:
                     #
-                    # `master`: "The first formula in a group of shared
+                    # `main`: "The first formula in a group of shared
                     #            formulas"
                     # `ref`: "Range of cells which the formula applies
-                    #        to." It's a required attribute on the master
+                    #        to." It's a required attribute on the main
                     #        cell, forbidden otherwise.
                     # `shared cell`: "A cell is shared only when si is
                     #                 used and t is `shared`."
                     #
                     # Whether to use the cell's given formula or the
-                    # master's depends on whether the cell is shared,
+                    # main's depends on whether the cell is shared,
                     # whether it's in the ref, and whether it defines its
                     # own formula, as follows:
                     #
                     #  Shared?   Has formula? | In ref    Not in ref
                     # ========= ==============|======== ===============
-                    #   Yes          Yes      | master   impl. defined
+                    #   Yes          Yes      | main   impl. defined
                     #    No          Yes      |  own         own
-                    #   Yes           No      | master   impl. defined
+                    #   Yes           No      | main   impl. defined
                     #    No           No      |  ??          N/A
                     #
                     # The ?? is because the spec is silent on this issue,
                     # though my inference is that the cell does not
                     # receive a formula at all.
                     #
-                    # For this implementation, we are using the master
+                    # For this implementation, we are using the main
                     # formula in the two "impl. defined" cases and no
                     # formula in the "??" case. This choice of
                     # implementation allows us to disregard the `ref`
@@ -165,11 +165,11 @@ class WorkSheetParser(object):
                     # computing expressions like `C5 in A1:D6`.
                     # Presumably, Excel does not generate spreadsheets
                     # with such contradictions.
-                    if si in self.shared_formula_masters:
-                        trans = self.shared_formula_masters[si]
+                    if si in self.shared_formula_mains:
+                        trans = self.shared_formula_mains[si]
                         value = trans.translate_formula(coordinate)
                     else:
-                        self.shared_formula_masters[si] = Translator(value, coordinate)
+                        self.shared_formula_mains[si] = Translator(value, coordinate)
 
 
         style_array = None

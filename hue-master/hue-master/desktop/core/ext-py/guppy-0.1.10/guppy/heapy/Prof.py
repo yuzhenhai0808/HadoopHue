@@ -97,8 +97,8 @@ class ValueLabel(Label):
 class ClickButton(Button):
     # Button that runs the command directly at the click, not at release.
     # And has auto-repeat.
-    def __init__(self, master, command, firstdelay=500,thendelay=150, **kwds):
-	Button.__init__(self, master, **kwds)
+    def __init__(self, main, command, firstdelay=500,thendelay=150, **kwds):
+	Button.__init__(self, main, **kwds)
 	self._command = command
 	self._firstdelay = firstdelay
 	self._thendelay = thendelay
@@ -234,25 +234,25 @@ class Stats:
 
 class ProfileRow:
     kindwidth = 30
-    def __init__(self, master, row, usecolor=1):
-	self.master = master
+    def __init__(self, main, row, usecolor=1):
+	self.main = main
 	self.row = row
 	if usecolor:
-	    colbg = Frame(master=master,bg='black',width=1, borderwidth=1, relief=GROOVE)
-	    self.color = Label(master=colbg,bg='white',width=1, borderwidth=1, relief=GROOVE)
+	    colbg = Frame(main=main,bg='black',width=1, borderwidth=1, relief=GROOVE)
+	    self.color = Label(main=colbg,bg='white',width=1, borderwidth=1, relief=GROOVE)
 	    self.color.grid(row=0, column=0)
 	    colbg.grid(row=row,column=0, sticky=NW)
 
 	self.rsizevar = SizeVar()
-	self.rsize = Label(master=master, textvariable=self.rsizevar, width=6,anchor=E)
+	self.rsize = Label(main=main, textvariable=self.rsizevar, width=6,anchor=E)
 	self.rpercentvar = StringVar() #BBIntVar()
-	self.rpercent = Label(master=master,textvariable=self.rpercentvar, width=3,anchor=E)
+	self.rpercent = Label(main=main,textvariable=self.rpercentvar, width=3,anchor=E)
 	self.dsizevar = SizeVar()
-	self.dsize = Label(master=master, textvariable=self.dsizevar, width=6,anchor=E)
+	self.dsize = Label(main=main, textvariable=self.dsizevar, width=6,anchor=E)
 	self.dpercentvar = StringVar() #BBIntVar()
-	self.dpercent = Label(master=master,textvariable=self.dpercentvar, width=3,anchor=E)
+	self.dpercent = Label(main=main,textvariable=self.dpercentvar, width=3,anchor=E)
 	self.kindvar = StringVar()
-	self.kind = Label(master=master, textvariable=self.kindvar, anchor=NW,
+	self.kind = Label(main=main, textvariable=self.kindvar, anchor=NW,
 			  width=self.kindwidth ,justify=LEFT)
 
 	self.rsize.grid(row=row, column=1, sticky=NE)
@@ -290,7 +290,7 @@ class ProfileRow:
 	self.kindvar.set(kind)
 
     def clear(self):
-	self.set_color_size_percent_kind(self.master['bg'], 0, 0, 0, 0, '--')
+	self.set_color_size_percent_kind(self.main['bg'], 0, 0, 0, 0, '--')
 
 
 class AxisControl:
@@ -298,7 +298,7 @@ class AxisControl:
     while scale_table[-1] < 1e12:
 	scale_table.append(scale_table[-3] * 10l)
 
-    def __init__(self, master,
+    def __init__(self, main,
 		 name,
 		 range,
 		 grid,
@@ -315,12 +315,12 @@ class AxisControl:
 	self.range = range
 	self.rangecommand = rangecommand
 
-	self.frame = frame = Frame(master,borderwidth=2,relief=GROOVE)
+	self.frame = frame = Frame(main,borderwidth=2,relief=GROOVE)
 	
 	self.rangevar = SizeVar()
 	self.rangevar.set(range)
 	if 1:
-	    rangeval = Entry(master=self.frame,
+	    rangeval = Entry(main=self.frame,
 			     # anchor=E,
 			     width=4,
 			     textvar=self.rangevar,
@@ -334,7 +334,7 @@ class AxisControl:
 	    rangeval.bind('<KeyPress-Return>',self.event_range_enter)
 
 	elif 1:
-	    rangeval = Button(master=self.frame,
+	    rangeval = Button(main=self.frame,
 			     anchor=E,
 			     width=4,
 			     textvar=self.rangevar,
@@ -483,7 +483,7 @@ Maximum range is 1T.""")
 	pass
 
     def errorbox(self, msg):
-	tkMessageBox.showerror(master=self.frame, message=msg)
+	tkMessageBox.showerror(main=self.frame, message=msg)
 
     def fit(self, range):
 	range = self.scale_by_table(range)
@@ -821,7 +821,7 @@ class Display:
     orgheight = 300
     minwidth = 30
     minheight = 30
-    def __init__(self, master,
+    def __init__(self, main,
 		 scale_table,
 		 numkindrows, 
 		 getkindcolor,
@@ -832,7 +832,7 @@ class Display:
 		 graphtype = 'Bars',
 		 statype = 'Size',
 		 ):
-	self.master = master
+	self.main = main
 	self.scale_table = scale_table
 	self.numkindrows = numkindrows
 	self.getkindcolor = getkindcolor
@@ -861,13 +861,13 @@ class Display:
 	#
 
 
-	self.frame = frame = Frame(master,
+	self.frame = frame = Frame(main,
 				   borderwidth=3,
 				   relief=SUNKEN,
 				   #relief=GROOVE,
 				   #background='green'
 				   )
-	#self.frame = frame = Frame(master,background='green')
+	#self.frame = frame = Frame(main,background='green')
 
 	bordercolor = '#ccc'
 	screencolor = '#e0e0e0'
@@ -1233,7 +1233,7 @@ class Display:
     def setcursor(self, cursor):
 	if cursor != self.cursor:
 	    self.drawingarea['cursor'] = cursor
-	    self.master['cursor'] = cursor
+	    self.main['cursor'] = cursor
 	    self.cursor = cursor
 
     def xmarkers_set(self):
@@ -1554,7 +1554,7 @@ class Display:
 
 
 class MarkerControl:
-    def __init__(self, master,
+    def __init__(self, main,
 		 marker,
 		 setcommand = lambda:0
 		 ):
@@ -1563,7 +1563,7 @@ class MarkerControl:
 	self.setcommand = setcommand
 	self.marker = marker
 	self.name = marker.name
-	sf = self.frame = Frame(master, borderwidth=2,relief=GROOVE)
+	sf = self.frame = Frame(main, borderwidth=2,relief=GROOVE)
 	self.samplevar = SizeVar()
 	Label(sf, text='%s sample'%marker.name).grid(row = 0, column = 0)
 	Label(sf,
@@ -1761,8 +1761,8 @@ class ProfileApp:
 	return ProfileBrowser(self, filename)
 
 class PaneDiv:
-    def __init__(self, master, movecommand):
-	self.frame = frame = Frame(master)
+    def __init__(self, main, movecommand):
+	self.frame = frame = Frame(main)
 	self.movecommand = movecommand
 	
 	self.butsize = bs = 6
@@ -1826,10 +1826,10 @@ class PaneDiv:
 
 
 class TableFrame:
-    def __init__(self, graph, master, numkindrows, samplevar):
+    def __init__(self, graph, main, numkindrows, samplevar):
 	self.graph = graph
 	self.mod = graph.mod
-	frame = self.frame = Frame(master,borderwidth=2,relief=GROOVE)
+	frame = self.frame = Frame(main,borderwidth=2,relief=GROOVE)
 	row = 0
 	self.marktime = StringVar()
 	self.totsizevar = SizeVar()
@@ -1958,12 +1958,12 @@ class ColSpec:
 		
 
 class TableFrame:
-    def __init__(self, graph, master):
+    def __init__(self, graph, main):
 	self.graph = graph
 	self.mod = graph.mod
 
 	frame = self.frame = Frame(
-	    master,
+	    main,
 	    borderwidth=3,
 	    relief=SUNKEN
 	    )
@@ -2003,7 +2003,7 @@ class TableFrame:
 	self.width = self.orgwidth = width
 
 	wrap = NONE
-	cursor = master['cursor']
+	cursor = main['cursor']
 	relief = FLAT
 	self.minpadx = 3
 	self.tothead = Text(
@@ -2319,9 +2319,9 @@ class TableFrame:
 
 
 class Filler:
-    def __init__(self, master):
+    def __init__(self, main):
 	self.frame = self.can = Canvas(
-	    master,
+	    main,
 	    #background='blue',
 	    width=0,
 	    height=0)
@@ -2399,7 +2399,7 @@ class ProfileBrowser:
 	self.inited = 0
 	self.app = app
 	self.mod = mod = app.mod
-	self.master = master = app.root
+	self.main = main = app.root
 	if filename:
 	    filename = mod.path.abspath(filename)
 	    self.initialdir = mod.path.dirname(filename)
@@ -2407,7 +2407,7 @@ class ProfileBrowser:
 	    self.initialdir = mod.os.getcwd()
     
 	self.frame = frame = Toplevel(
-	    master,
+	    main,
 	    #background='#bbb'
 	    )
 	#frame['cursor'] = 'umbrella'
@@ -3054,7 +3054,7 @@ class ProfileBrowser:
 	    except:
 		etype, value, tb = self.mod._root.sys.exc_info()
 		tkMessageBox.showerror(
-		    master=self.frame,
+		    main=self.frame,
 		    message = (
 			"Error when loading\n%r:\n"%filename+
 			"%s"%''.join(self.mod._root.traceback.format_exception_only(
